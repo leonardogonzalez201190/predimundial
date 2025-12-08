@@ -1,0 +1,51 @@
+{
+    "groups": [
+        {
+            "group": "A"
+        },
+        {
+            "group": "B"
+        },
+        {
+            "group": "C",
+            "matches": [
+                {
+                    "id": "C1",
+                    "date": "2026-06-13",
+                    "time": "18:00",
+                    "venue": "New York/New Jersey",
+                    "status": "scheduled",
+                    "result": null,
+                    "home": {
+                        "name": "Brazil",
+                        "code": "BR",
+                        "flagUrl": "https://flagcdn.com/br.svg"
+                    },
+                    "away": {
+                        "name": "Morocco",
+                        "code": "MA",
+                        "flagUrl": "https://flagcdn.com/ma.svg"
+                    }
+                },
+                {
+                    "id": "C2",
+                    "date": "2026-06-13",
+                    "time": "21:00",
+                    "venue": "Boston",
+                    "status": "scheduled",
+                    "result": null,
+                    "home": {
+                        "name": "Haiti",
+                        "code": "HT",
+                        "flagUrl": "https://flagcdn.com/ht.svg"
+                    },
+                    "away": {
+                        "name": "Scotland",
+                        "code": "GB-SCT",
+                        "flagUrl": "https://flagcdn.com/gb-sct.svg"
+                    }
+                }
+            ]
+        }
+    ]
+}
