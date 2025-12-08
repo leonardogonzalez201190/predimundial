@@ -3,12 +3,9 @@
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription, DrawerTrigger } from "@/components/ui/drawer";
 import Image from "next/image";
 
-type MatchData = {
-  id: string;
-  home: { name: string; flagUrl: string };
-  away: { name: string; flagUrl: string };
-  result?: { homeScore: number; awayScore: number } | null;
-};
+import { Match } from "@/lib/types";
+
+type MatchData = Match;
 
 type UserPrediction = {
   matchId: string;
@@ -55,7 +52,7 @@ export default function UserPredictionsDrawer({ username, matches, predictions }
 
                 {match.result && (
                   <div className="text-xs text-green-600 font-semibold">
-                    Final: {match.result.homeScore} - {match.result.awayScore}
+                    Final: {match.result?.home} - {match.result?.away}
                   </div>
                 )}
               </div>

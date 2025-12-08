@@ -27,17 +27,17 @@ export default async function RankingPage() {
     .filter(m => m.result !== null);
 
   // Obtener usuarios
-  const users = JSON.parse(JSON.stringify(
+  const users = (JSON.parse(JSON.stringify(
     await User.find().lean()
-  )).map(u => ({
+  )) as any[]).map((u: any) => ({
     ...u,
     _id: u._id.toString(),
   }));
 
   // Obtener predicciones
-  const predictions = JSON.parse(JSON.stringify(
+  const predictions = (JSON.parse(JSON.stringify(
     await Prediction.find().lean()
-  )).map(p => ({
+  )) as any[]).map((p: any) => ({
     ...p,
     userId: p.userId?.toString() ?? "",
   }));
@@ -56,7 +56,7 @@ export default async function RankingPage() {
 
       totalPoints += evaluatePrediction(
         { homeScore: pred.homeScore, awayScore: pred.awayScore },
-        { homeScore: match.result!.homeScore, awayScore: match.result!.awayScore }
+        { homeScore: match.result!.home ?? 0, awayScore: match.result!.away ?? 0 }
       );
 
       matchesCount++;

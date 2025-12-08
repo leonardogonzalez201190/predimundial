@@ -32,12 +32,12 @@ export default function MatchRow({
 
   const displayHomeScore =
     existingPrediction?.homeScore ??
-    match.result?.homeScore ??
+    match.result?.home ??
     "-";
 
   const displayAwayScore =
     existingPrediction?.awayScore ??
-    match.result?.awayScore ??
+    match.result?.away ??
     "-";
 
   return (
@@ -49,7 +49,7 @@ export default function MatchRow({
 
         {isLocked ? (
           <span className="font-bold text-green-600">
-            Final {match.result?.homeScore} - {match.result?.awayScore}
+            Final {match.result?.home} - {match.result?.away}
           </span>
         ) : (
           <span>{match.date} : {match.time}</span>
