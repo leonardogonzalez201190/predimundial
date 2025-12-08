@@ -8,6 +8,19 @@ import { MatchesResponse } from "@/lib/types";
 import { redirect } from "next/navigation";
 import UserPredictionsDrawer from "@/components/UserPredictionsDrawer";
 
+interface LeanUser {
+  _id: any;
+  alias: string;
+}
+
+interface LeanPrediction {
+  _id: any;
+  userId?: any;
+  homeScore: number;
+  awayScore: number;
+  matchId: string;
+}
+
 export default async function RankingPage() {
   const session = await getServerSession(authConfig);
   if (!session) redirect("/login");
@@ -26,32 +39,30 @@ export default async function RankingPage() {
     .flatMap(g => g.matches)
     .filter(m => m.result !== null);
 
-  // Obtener usuarios
-  const users = (JSON.parse(JSON.stringify(
-    await User.find().lean()
-  )) as any[]).map((u: any) => ({
+  // Obtener usuarios y mapear correctamente el tipo
+  const usersRaw = await User.find().lean();
+  const users = (usersRaw as unknown as LeanUser[]).map((u) => ({
     ...u,
     _id: u._id.toString(),
   }));
 
-  // Obtener predicciones
-  const predictions = (JSON.parse(JSON.stringify(
-    await Prediction.find().lean()
-  )) as any[]).map((p: any) => ({
+  // Obtener predicciones y tipar correctamente
+  const predsRaw = await Prediction.find().lean();
+  const predictions = (predsRaw as unknown as LeanPrediction[]).map((p) => ({
     ...p,
     userId: p.userId?.toString() ?? "",
   }));
 
-  const ranking = users.map(user => {
+  const ranking = users.map((user) => {
     const userPredictions = predictions.filter(
-      p => p.userId.toString() === user._id.toString()
+      (p) => p.userId === user._id
     );
 
     let totalPoints = 0;
     let matchesCount = 0;
 
-    userPredictions.forEach(pred => {
-      const match = allMatchesWithResults.find(m => m.id === pred.matchId);
+    userPredictions.forEach((pred) => {
+      const match = allMatchesWithResults.find((m) => m.id === pred.matchId);
       if (!match) return;
 
       totalPoints += evaluatePrediction(
@@ -63,7 +74,7 @@ export default async function RankingPage() {
     });
 
     return {
-      _id: user._id,          // 🔥 Ahora incluimos el ID
+      _id: user._id,
       alias: user.alias,
       predictions: matchesCount,
       points: totalPoints,
@@ -99,7 +110,7 @@ export default async function RankingPage() {
                 <UserPredictionsDrawer
                   username={r.alias}
                   matches={allMatchesWithResults}
-                  predictions={predictions.filter(p => p.userId === r._id)} // 🔥 Corregido
+                  predictions={predictions.filter((p) => p.userId === r._id)}
                 />
               </td>
             </tr>
