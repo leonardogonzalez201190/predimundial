@@ -9,13 +9,13 @@ import { redirect } from "next/navigation";
 import UserPredictionsDrawer from "@/components/UserPredictionsDrawer";
 
 interface LeanUser {
-  _id: any;
+  _id: string | { toString(): string };
   alias: string;
 }
 
 interface LeanPrediction {
-  _id: any;
-  userId?: any;
+  _id: string | { toString(): string };
+  userId?: string | { toString(): string };
   homeScore: number;
   awayScore: number;
   matchId: string;
@@ -27,7 +27,7 @@ export default async function RankingPage() {
 
   await connectToDB();
 
-  // Obtener partidos con resultados oficiales
+  // Obtener partidos oficiales
   const matchesRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/matches`,
     { cache: "no-store" }
@@ -36,23 +36,24 @@ export default async function RankingPage() {
   const matchesData: MatchesResponse = await matchesRes.json();
 
   const allMatchesWithResults = matchesData.groups
-    .flatMap(g => g.matches)
-    .filter(m => m.result !== null);
+    .flatMap((g) => g.matches)
+    .filter((m) => m.result !== null);
 
-  // Obtener usuarios y mapear correctamente el tipo
-  const usersRaw = await User.find().lean();
-  const users = (usersRaw as unknown as LeanUser[]).map((u) => ({
+  // Obtener usuarios tipados
+  const usersRaw = await User.find().lean<LeanUser[]>();
+  const users = usersRaw.map((u) => ({
     ...u,
     _id: u._id.toString(),
   }));
 
-  // Obtener predicciones y tipar correctamente
-  const predsRaw = await Prediction.find().lean();
-  const predictions = (predsRaw as unknown as LeanPrediction[]).map((p) => ({
+  // Obtener predicciones tipadas
+  const predsRaw = await Prediction.find().lean<LeanPrediction[]>();
+  const predictions = predsRaw.map((p) => ({
     ...p,
     userId: p.userId?.toString() ?? "",
   }));
 
+  // Construir ranking
   const ranking = users.map((user) => {
     const userPredictions = predictions.filter(
       (p) => p.userId === user._id
@@ -62,12 +63,17 @@ export default async function RankingPage() {
     let matchesCount = 0;
 
     userPredictions.forEach((pred) => {
-      const match = allMatchesWithResults.find((m) => m.id === pred.matchId);
+      const match = allMatchesWithResults.find(
+        (m) => m.id === pred.matchId
+      );
       if (!match) return;
 
       totalPoints += evaluatePrediction(
         { homeScore: pred.homeScore, awayScore: pred.awayScore },
-        { homeScore: match.result!.home ?? 0, awayScore: match.result!.away ?? 0 }
+        {
+          homeScore: match.result!.home ?? 0,
+          awayScore: match.result!.away ?? 0,
+        }
       );
 
       matchesCount++;
