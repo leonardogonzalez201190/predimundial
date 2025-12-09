@@ -33,6 +33,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen">
+      <img src="/mundial.png" alt="" className="w-24 dark:bg-white"/>
       <h2>Registro</h2>
 
       <form onSubmit={handleRegister} className="flex flex-col gap-4">
@@ -60,12 +61,12 @@ export default function RegisterPage() {
 
         <Button type="submit">Crear cuenta</Button>
       </form>
-      <p>
-        ¿Ya tenés cuenta?{" "}
+      <div className="flex gap-2">
+        <p>¿Ya tenés cuenta?</p>
         <a href="/login" style={{ color: "blue" }}>
           Inicia sesión aquí
         </a>
-      </p>
+      </div>
     </div>
   );
 }

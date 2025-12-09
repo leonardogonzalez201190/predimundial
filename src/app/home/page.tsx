@@ -87,11 +87,11 @@ export default async function RankingPage() {
 
       <table className="w-full text-left border-collapse text-[12px]">
         <thead>
-          <tr className="border-b text-sm text-card-foreground bg-muted">
-            <th className="py-2">#</th>
-            <th className="py-2">Alias</th>
-            <th className="py-2">Predicciones</th>
-            <th className="py-2">Puntos</th>
+          <tr className="border-b text-card-foreground bg-muted">
+            <th className="p-2">#</th>
+            <th className="p-2">Alias</th>
+            <th className="p-2">Predicciones</th>
+            <th className="p-2">Puntos</th>
             <th className="text-end p-2">Detalles</th>
           </tr>
         </thead>
@@ -99,10 +99,10 @@ export default async function RankingPage() {
         <tbody>
           {ranking.map((userRanking, index) => (
             <tr key={userRanking.id} className="border-b">
-              <td className="py-2 font-bold">{index + 1}</td>
-              <td className="py-2 truncate">{userRanking.alias}</td>
-              <td className="py-2">{userRanking.predictions}</td>
-              <td className="py-2 font-bold">{userRanking.points}</td>
+              <td className="p-2 font-bold">{index + 1}</td>
+              <td className="p-2 truncate">{userRanking.alias}</td>
+              <td className="p-2">{userRanking.predictions}</td>
+              <td className="p-2 font-bold">{userRanking.points}</td>
               <td className="p-2 text-end">
                 <UserPredictionsDrawer
                   username={userRanking.alias}

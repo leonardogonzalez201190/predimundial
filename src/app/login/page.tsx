@@ -32,9 +32,11 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen">
+      <img src="/mundial.png" alt="" className="w-24 dark:bg-white"/>
       <h2>Iniciar sesión</h2>
       <form onSubmit={handleLogin} className="flex flex-col gap-4">
         <Input
+          autoFocus={true}
           placeholder="Usuario"
           value={username}
           onChange={e => setUser(e.target.value)}
@@ -51,12 +53,12 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <p>
-        ¿No tenés cuenta?{" "}
+      <div className="flex gap-2">
+        <p>¿No tenés cuenta?</p>
         <a href="/register" style={{ color: "blue" }}>
           Registrate aquí
         </a>
-      </p>
+      </div>
     </div>
   );
 }

@@ -31,7 +31,7 @@ export default function UserPredictionsDrawer({
         className="p-6 space-y-4 max-h-screen overflow-y-auto overflow-x-hidden"
       >
         <DrawerTitle className="text-xl font-bold flex items-center justify-between">
-          <h1>{username}</h1>
+          <h1 className="whitespace-nowrap truncate">{username}</h1>
           <p className="text-muted-foreground text-sm">Predicciones</p>
         </DrawerTitle>
 
