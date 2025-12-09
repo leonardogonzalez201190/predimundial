@@ -18,8 +18,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
         className="
           sticky top-0 z-50
           flex items-center justify-between
-          px-3 py-2
-          border-b
+          p-2 border-b
           bg-white/60 backdrop-blur-md
           dark:bg-black/40
         "
@@ -30,12 +29,12 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
         </nav>
 
         <nav className="flex gap-2">
-          <Link className={buttonVariants({ variant: "link" })} href="/home">
+          <Link className={buttonVariants({ variant: "outline" })} href="/home">
             <TrendingUp className="w-4 h-4 mr-1" />
             Posiciones
           </Link>
 
-          <Link className={buttonVariants({ variant: "link" })} href="/home/partidos">
+          <Link className={buttonVariants({ variant: "outline", className: "text-end" })} href="/home/partidos">
             <CalendarCheck2 className="w-4 h-4 mr-1" />
             Partidos
           </Link>

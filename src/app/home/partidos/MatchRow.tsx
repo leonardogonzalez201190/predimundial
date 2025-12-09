@@ -96,7 +96,7 @@ export default function MatchRow({
         {/* Vote / bloqueado */}
         <div className="flex justify-center">
           {session && !isLocked ? (
-            <Button variant="ghost" type="submit" size="sm" className="px-5">
+            <Button variant="outline" type="submit" size="sm" className="px-5">
               Votar
             </Button>
           ) : (

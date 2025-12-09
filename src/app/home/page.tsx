@@ -85,7 +85,7 @@ export default async function RankingPage() {
     <div className="w-full px-4 sm:px-0">
       <h1 className="font-bold py-4">Ranking General</h1>
 
-      <table className="w-full text-left border-collapse">
+      <table className="w-full text-left border-collapse text-[12px]">
         <thead>
           <tr className="border-b text-sm text-card-foreground bg-muted">
             <th className="py-2">#</th>
@@ -98,9 +98,9 @@ export default async function RankingPage() {
 
         <tbody>
           {ranking.map((userRanking, index) => (
-            <tr key={userRanking.id} className="border-b text-sm">
+            <tr key={userRanking.id} className="border-b">
               <td className="py-2 font-bold">{index + 1}</td>
-              <td className="py-2">{userRanking.alias}</td>
+              <td className="py-2 truncate">{userRanking.alias}</td>
               <td className="py-2">{userRanking.predictions}</td>
               <td className="py-2 font-bold">{userRanking.points}</td>
               <td className="p-2 text-end">
