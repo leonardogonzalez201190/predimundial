@@ -82,8 +82,15 @@ export default async function RankingPage() {
   ranking.sort((a, b) => b.points - a.points);
 
   return (
-    <div className="w-full px-4 sm:px-0">
-      <h1 className="font-bold py-4">Ranking General</h1>
+    <div className="w-full p-4 sm:px-0 space-y-4">
+
+      <div className="text-sm text-muted-foreground p-3 bg-card border rounded-md">
+        El ranking estará disponible a medida que los partidos se vayan cerrando.
+        Una vez finalizados los encuentros y publicados los resultados oficiales,
+        podrás ver las puntuaciones actualizadas y compararlas con otros participantes.
+      </div>
+
+      <h1 className="font-bold">Ranking General</h1>
 
       <table className="w-full text-left border-collapse text-[12px]">
         <thead>

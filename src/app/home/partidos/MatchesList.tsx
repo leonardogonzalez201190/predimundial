@@ -35,7 +35,12 @@ export default function MatchesList({ data, session, predictions }: MatchesProps
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-4">
+
+      <div className="text-sm text-muted-foreground p-3 bg-card border rounded-md">
+        Puedes registrar y modificar tu predicción para este partido hasta una hora antes del inicio oficial.
+        Asegúrate de revisar tus marcadores antes de que cierre el plazo después de ese momento, tu voto quedará bloqueado y no podrá cambiarse.
+      </div>
 
       {data.groups.map((group: Group) => (
         <div key={group.group}>
