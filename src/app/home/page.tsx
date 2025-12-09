@@ -4,75 +4,66 @@ import { connectToDB } from "@/lib/database";
 import User from "@/models/User";
 import Prediction from "@/models/Prediction";
 import { evaluatePrediction } from "@/lib/score";
-import { MatchesResponse } from "@/lib/types";
 import { redirect } from "next/navigation";
 import UserPredictionsDrawer from "@/components/UserPredictionsDrawer";
 
-interface LeanUser {
-  _id: string | { toString(): string };
-  alias: string;
-}
-
-interface LeanPrediction {
-  _id: string | { toString(): string };
-  userId?: string | { toString(): string };
-  homeScore: number;
-  awayScore: number;
-  matchId: string;
-}
+import type { LeanUser, LeanPrediction, MatchResult } from "@/lib/types";
 
 export default async function RankingPage() {
   const session = await getServerSession(authConfig);
-  if (!session) redirect("/login");
+  if (!session) return redirect("/login");
 
   await connectToDB();
 
   // Obtener partidos oficiales
-  const matchesRes = await fetch(
+  const matchesResponse = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/matches`,
     { cache: "no-store" }
   );
 
-  const matchesData: MatchesResponse = await matchesRes.json();
+  const matchesData = await matchesResponse.json();
 
-  const allMatchesWithResults = matchesData.groups
-    .flatMap((g) => g.matches)
-    .filter((m) => m.result !== null);
+  const officialMatchesWithResults: MatchResult[] = matchesData.groups
+    .flatMap((group: any) => group.matches)
+    .filter((match: any) => match.result !== null);
 
-  // Obtener usuarios tipados
+  // Obtener usuarios con tipado explícito en el map
   const usersRaw = await User.find().lean<LeanUser[]>();
-  const users = usersRaw.map((u) => ({
-    ...u,
-    _id: u._id.toString(),
+  const users = usersRaw.map((user: LeanUser) => ({
+    id: user._id!.toString(),
+    alias: user.alias,
   }));
 
   // Obtener predicciones tipadas
   const predsRaw = await Prediction.find().lean<LeanPrediction[]>();
-  const predictions = predsRaw.map((p) => ({
-    ...p,
-    userId: p.userId?.toString() ?? "",
+  const predictions = predsRaw.map((p: LeanPrediction) => ({
+    id: p._id!.toString(),
+    userId: p.userId!.toString(),
+    homeScore: p.homeScore,
+    awayScore: p.awayScore,
+    matchId: p.matchId,
   }));
 
-  // Construir ranking
+  // Calcular ranking
   const ranking = users.map((user) => {
     const userPredictions = predictions.filter(
-      (p) => p.userId === user._id
+      (prediction) => prediction.userId === user.id
     );
 
     let totalPoints = 0;
     let matchesCount = 0;
 
-    userPredictions.forEach((pred) => {
-      const match = allMatchesWithResults.find(
-        (m) => m.id === pred.matchId
+    userPredictions.forEach((prediction) => {
+      const match = officialMatchesWithResults.find(
+        (match) => match.id === prediction.matchId
       );
       if (!match) return;
 
       totalPoints += evaluatePrediction(
-        { homeScore: pred.homeScore, awayScore: pred.awayScore },
+        { homeScore: prediction.homeScore, awayScore: prediction.awayScore },
         {
-          homeScore: match.result!.home ?? 0,
-          awayScore: match.result!.away ?? 0,
+          homeScore: match.result.home ?? 0,
+          awayScore: match.result.away ?? 0,
         }
       );
 
@@ -80,7 +71,7 @@ export default async function RankingPage() {
     });
 
     return {
-      _id: user._id,
+      id: user.id,
       alias: user.alias,
       predictions: matchesCount,
       points: totalPoints,
@@ -106,17 +97,19 @@ export default async function RankingPage() {
         </thead>
 
         <tbody>
-          {ranking.map((r, i) => (
-            <tr key={i} className="border-b text-sm">
-              <td className="py-2 font-bold">{i + 1}</td>
-              <td className="py-2">{r.alias}</td>
-              <td className="py-2">{r.predictions}</td>
-              <td className="py-2 font-bold">{r.points}</td>
+          {ranking.map((userRanking, index) => (
+            <tr key={userRanking.id} className="border-b text-sm">
+              <td className="py-2 font-bold">{index + 1}</td>
+              <td className="py-2">{userRanking.alias}</td>
+              <td className="py-2">{userRanking.predictions}</td>
+              <td className="py-2 font-bold">{userRanking.points}</td>
               <td className="p-2 text-end">
                 <UserPredictionsDrawer
-                  username={r.alias}
-                  matches={allMatchesWithResults}
-                  predictions={predictions.filter((p) => p.userId === r._id)}
+                  username={userRanking.alias}
+                  matches={officialMatchesWithResults}
+                  predictions={predictions.filter(
+                    (prediction) => prediction.userId === userRanking.id
+                  )}
                 />
               </td>
             </tr>

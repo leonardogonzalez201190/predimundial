@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import LogoutButton from "@/components/LogoutButton";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { CalendarCheck2, TrendingUp } from "lucide-react";
+import { CalendarCheck2, TrendingUp, UserRound } from "lucide-react";
 
 export default async function HomeLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authConfig);
@@ -24,7 +24,10 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
           dark:bg-black/40
         "
       >
-        <h1 className="font-bold">{session.user?.alias}</h1>
+        <nav className="flex items-center gap-2">
+          <UserRound className="w-4 h-4 mr-1" />
+          <h1 className="font-bold">{session.user?.alias}</h1>
+        </nav>
 
         <nav className="flex gap-2">
           <Link className={buttonVariants({ variant: "link" })} href="/home">

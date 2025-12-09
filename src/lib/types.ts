@@ -1,62 +1,109 @@
-export type Team = {
+/** ---------- Core domain ---------- **/
+
+export interface Team {
   name: string;
   code: string;
   flagUrl: string;
-};
+}
 
-export type MatchResult = {
-  home?: number;
-  away?: number;
-} | null;
+/**
+ * Representa el resultado de un partido.
+ * `null` indica que aún no tiene resultado.
+ */
+export interface MatchScore {
+  home: number | null;
+  away: number | null;
+}
 
-export type Match = {
+export interface Match {
   id: string;
   date: string;
   time: string;
   venue: string;
   status: string;
-  result: MatchResult;
+  result: MatchScore | null;
   home: Team;
   away: Team;
-};
+}
 
-export type Group = {
+export interface Group {
   group: string;
   matches: Match[];
-};
+}
 
-export type MatchesResponse = {
+export interface MatchesResponse {
   groups: Group[];
-};
+}
 
-export type SessionUser = {
+/** ---------- Session / Authentication ---------- **/
+
+export interface SessionUser {
   id: string;
   username?: string;
   alias?: string;
-};
+}
 
-export type Session = {
+export interface Session {
   user?: SessionUser;
-} | null;
+}
 
-export type Prediction = {
+/** ---------- Predictions ---------- **/
+
+export interface Prediction {
   matchId: string;
   homeScore: number;
   awayScore: number;
-};
+}
 
-export type MatchesProps = {
+export interface UserPrediction extends Prediction {}
+
+/** Props para componentes de UI relacionados a partidos */
+export interface MatchesProps {
   data: MatchesResponse;
-  session: Session;
+  session: Session | null;
   predictions: Prediction[];
-};
+}
 
-export type MatchRowProps = {
+export interface MatchRowProps {
   match: Match;
-  session?: object | null;
-  existingPrediction?: {
-    homeScore: number;
-    awayScore: number;
-  };
+  session?: Session | null;
+  existingPrediction?: Prediction;
   onVote?: (matchId: string, home: number, away: number) => void;
-};
+}
+
+/** ---------- Ranking / Resultados ---------- **/
+
+export interface UserPredictionDrawerProps {
+  username: string;
+  matches: any;
+  predictions: UserPrediction[];
+}
+
+/** Tipos basados en Mongoose `.lean()` */
+export interface LeanUser {
+  _id: unknown; // mejor desconocido que string | object
+  alias: string;
+}
+
+export interface LeanPrediction {
+  _id: unknown;
+  userId: unknown;
+  homeScore: number;
+  awayScore: number;
+  matchId: string;
+}
+
+/**
+ * Resumen de partido ya completado
+ * útil para rankings ya que siempre existe resultado
+ */
+export interface CompletedMatch {
+  id: string;
+  result: MatchScore;
+}
+
+
+export interface MatchResult {
+  id: string;
+  result: MatchScore;
+}

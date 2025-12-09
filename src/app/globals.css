@@ -126,9 +126,6 @@
   }
 }
 
-html {
-  overflow-y: scroll;
-}
 
 /* Ocultar scrollbar en navegadores basados en WebKit */
 .no-scrollbar::-webkit-scrollbar {

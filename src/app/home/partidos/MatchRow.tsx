@@ -41,7 +41,7 @@ export default function MatchRow({
     "-";
 
   return (
-    <div className="border rounded-lg p-4 bg-card shadow-sm space-y-4">
+    <div className="border rounded-lg p-3 bg-card space-y-3">
 
       {/* Header */}
       <div className="flex justify-between text-xs text-muted-foreground">

@@ -1,0 +1,10 @@
+{
+    "id": "A1",
+    "date": "2026-06-11",
+    "time": "19:00",
+    "venue": "Los Angeles, CA",
+    "status": "scheduled",
+    "result": null,
+    "home": { "name": "USA", "code": "US", "flagUrl": "https://flagcdn.com/us.svg" },
+    "away": { "name": "Wales", "code": "GB-WLS", "flagUrl": "https://flagcdn.com/gb-wls.svg" }
+}
