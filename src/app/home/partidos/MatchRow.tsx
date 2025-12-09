@@ -41,10 +41,10 @@ export default function MatchRow({
     "-";
 
   return (
-    <div className="border rounded-lg p-3 bg-card space-y-3">
+    <div className="rounded-lg p-3 space-y-3 bg-secondary">
 
       {/* Header */}
-      <div className="flex justify-between text-xs text-muted-foreground">
+      <div className="flex justify-between text-xs">
         <span>{match.venue}</span>
 
         {isLocked ? (
@@ -86,7 +86,7 @@ export default function MatchRow({
               name={`home-${match.id}`}
               type="number"
               defaultValue={existingPrediction?.homeScore ?? ""}
-              className="w-20 text-center"
+              className="w-20 text-center bg-card"
             />
           ) : (
             <span className="font-bold text-lg">{displayHomeScore}</span>
@@ -113,7 +113,7 @@ export default function MatchRow({
               name={`away-${match.id}`}
               type="number"
               defaultValue={existingPrediction?.awayScore ?? ""}
-              className="w-20 text-center"
+              className="w-20 text-center bg-card"
             />
           ) : (
             <span className="font-bold text-lg">{displayAwayScore}</span>

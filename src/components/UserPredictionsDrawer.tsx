@@ -39,10 +39,10 @@ export default function UserPredictionsDrawer({
           {entries.map(({ match, prediction }: any) => (
             <div
               key={match.id}
-              className="border rounded-lg p-3 bg-card space-y-3"
+              className="bg-secondary rounded-lg p-3 space-y-3"
             >
               {/* Header */}
-              <div className="text-xs text-muted-foreground flex justify-between">
+              <div className="text-xs flex justify-between">
                 <span>
                   {match.home.name} vs {match.away.name}
                 </span>
