@@ -24,7 +24,7 @@ export default function UserPredictionsDrawer({
   return (
     <Drawer direction="right">
       <DrawerTrigger className="text-blue-600 hover:underline">
-        Ver detalles
+        Detalles
       </DrawerTrigger>
 
       <DrawerContent

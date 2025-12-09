@@ -92,7 +92,7 @@ export default async function RankingPage() {
             <th className="py-2">Alias</th>
             <th className="py-2">Predicciones</th>
             <th className="py-2">Puntos</th>
-            <th className="text-end p-2">Details</th>
+            <th className="text-end p-2">Detalles</th>
           </tr>
         </thead>
 

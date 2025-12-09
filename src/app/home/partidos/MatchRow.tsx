@@ -86,7 +86,7 @@ export default function MatchRow({
               name={`home-${match.id}`}
               type="number"
               defaultValue={existingPrediction?.homeScore ?? ""}
-              className="w-20 text-center bg-card"
+              className="w-12 sm:w-20 text-center bg-card"
             />
           ) : (
             <span className="font-bold text-lg">{displayHomeScore}</span>
@@ -96,7 +96,7 @@ export default function MatchRow({
         {/* Vote / bloqueado */}
         <div className="flex justify-center">
           {session && !isLocked ? (
-            <Button type="submit" size="sm" className="px-5">
+            <Button variant="ghost" type="submit" size="sm" className="px-5">
               Votar
             </Button>
           ) : (
@@ -113,7 +113,7 @@ export default function MatchRow({
               name={`away-${match.id}`}
               type="number"
               defaultValue={existingPrediction?.awayScore ?? ""}
-              className="w-20 text-center bg-card"
+              className="w-12 sm:w-20 text-center bg-card"
             />
           ) : (
             <span className="font-bold text-lg">{displayAwayScore}</span>

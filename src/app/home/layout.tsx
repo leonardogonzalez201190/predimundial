@@ -24,7 +24,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
           dark:bg-black/40
         "
       >
-        <nav className="flex items-center gap-2">
+        <nav className="items-center gap-2 hidden sm:flex">
           <UserRound className="w-4 h-4 mr-1" />
           <h1 className="font-bold">{session.user?.alias}</h1>
         </nav>
