@@ -10,10 +10,8 @@ export default function BackLink() {
   if (pathname === "/") return null;
 
   return (
-    <div className="p-4">
-      <Link href="/" className="text-blue-600 hover:underline">
-        &larr; Back
-      </Link>
-    </div>
+    <Link href="/" className="text-blue-600 hover:underline">
+      &larr; Back
+    </Link>
   );
 }

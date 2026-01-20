@@ -5,7 +5,7 @@ import LogoutButton from "@/components/LogoutButton";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { CalendarCheck2, TrendingUp, UserRound } from "lucide-react";
+import { CalendarCheck2, ListCheck, TrendingUp, UserRound } from "lucide-react";
 import BackButton from "@/components/BackButton";
 
 export default async function HomeLayout({ children }: { children: React.ReactNode }) {
@@ -49,7 +49,13 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
       </header>
 
       {/* 🔹 margen superior para que el contenido no quede tapado */}
-      <BackButton />
+      <header className="flex items-center justify-between p-2 py-4" >
+        <BackButton />
+        <h1 className="text-center flex items-center justify-center text-base">
+          <ListCheck className="size-4 mr-2" />
+          Predicciones
+        </h1>
+      </header>
       {children}
 
     </div>

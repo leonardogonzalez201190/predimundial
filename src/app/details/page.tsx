@@ -37,14 +37,11 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
     });
 
     return (
-        <div className="flex flex-col gap-3 p-4">
-            <header className="text-xl font-bold flex items-center justify-between">
-                <h1 className="whitespace-nowrap truncate">
-                    {user?.username}/
-                    <span className="text-muted-foreground font-light">({user?.alias})</span>
-                </h1>
-                <p className="text-muted-foreground text-sm">Predicciones</p>
-            </header>
+        <div className="flex flex-col gap-3 px-4">
+            <h1 className="whitespace-nowrap truncate text-xl">
+                {user?.username}/
+                <span className="text-muted-foreground font-light">({user?.alias})</span>
+            </h1>
             {entries.map(({ match, prediction }: any) => (
                 <div
                     key={match.id}
