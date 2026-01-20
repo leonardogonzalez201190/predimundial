@@ -98,8 +98,8 @@ export default async function RankingPage() {
           <tr className="border-b text-card-foreground bg-muted">
             <th className="p-2">#</th>
             <th className="p-2">Alias</th>
-            <th className="p-2">Predicciones</th>
-            <th className="p-2">Puntos</th>
+            <th className="p-2 text-center">Puntos</th>
+            <th className="p-2 text-center">Predicciones</th>
             <th className="text-end p-2">Detalles</th>
           </tr>
         </thead>
@@ -109,8 +109,8 @@ export default async function RankingPage() {
             <tr key={userRanking.id} className="border-b">
               <td className="p-2 font-bold">{index + 1}</td>
               <td className="p-2 truncate">{userRanking.alias}</td>
-              <td className="p-2">{userRanking.predictions}</td>
-              <td className="p-2 font-bold">{userRanking.points}</td>
+              <td className="p-2 text-center font-bold">{userRanking.points}</td>
+              <td className="p-2 text-center">{userRanking.predictions}</td>
               <td className="p-2 text-end">
                 <Link
                   className="text-blue-500 hover:text-blue-600"

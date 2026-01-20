@@ -49,7 +49,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
       </header>
 
       {/* 🔹 margen superior para que el contenido no quede tapado */}
-      <header className="flex items-center justify-between p-2 py-4" >
+      <header className="flex items-center justify-between p-4" >
         <BackButton />
         <h1 className="text-center flex items-center justify-center text-base">
           <ListCheck className="size-4 mr-2" />
