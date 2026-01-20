@@ -37,7 +37,7 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
     });
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 p-4">
             <header className="text-xl font-bold flex items-center justify-between">
                 <h1 className="whitespace-nowrap truncate">
                     {user?.username}/
