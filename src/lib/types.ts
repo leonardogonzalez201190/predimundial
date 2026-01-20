@@ -93,6 +93,12 @@ export interface LeanPrediction {
   matchId: string;
 }
 
+export interface LeanUser {
+  _id: unknown;
+  username: string;
+  alias: string;
+}
+
 /**
  * Resumen de partido ya completado
  * útil para rankings ya que siempre existe resultado

@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { connectToDB } from "@/lib/database";
-import type { LeanPrediction, MatchResult } from "@/lib/types";
+import type { LeanPrediction, LeanUser, MatchResult } from "@/lib/types";
 import Prediction from "@/models/Prediction";
 import Image from "next/image";
 import User from "@/models/User";
@@ -21,7 +21,7 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
         { cache: "no-store" }
     );
 
-    const user = await User.findById(userId).select("username alias").lean();
+    const user = await User.findById(userId).select("username alias").lean<LeanUser>();
     const matchesData = await matchesResponse.json();
 
     const matches: MatchResult[] = matchesData.groups
