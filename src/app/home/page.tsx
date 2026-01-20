@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import UserPredictionsDrawer from "@/components/UserPredictionsDrawer";
 
 import type { LeanUser, LeanPrediction, MatchResult } from "@/lib/types";
+import Link from "next/link";
 
 export default async function RankingPage() {
   const session = await getServerSession(authConfig);
@@ -111,13 +112,10 @@ export default async function RankingPage() {
               <td className="p-2">{userRanking.predictions}</td>
               <td className="p-2 font-bold">{userRanking.points}</td>
               <td className="p-2 text-end">
-                <UserPredictionsDrawer
-                  username={userRanking.alias}
-                  matches={officialMatchesWithResults}
-                  predictions={predictions.filter(
-                    (prediction) => prediction.userId === userRanking.id
-                  )}
-                />
+                <Link
+                  className="text-blue-500 hover:text-blue-600"
+                  href={`/details?userId=${userRanking.id}`}
+                >Ver detalles</Link>
               </td>
             </tr>
           ))}
