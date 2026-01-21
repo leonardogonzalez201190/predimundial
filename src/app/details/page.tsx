@@ -37,10 +37,10 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
     });
 
     return (
-        <div className="flex flex-col gap-3 px-4">
+        <div className="flex flex-col gap-3 p-4">
             <h1 className="whitespace-nowrap truncate text-xl">
                 {user?.username}/
-                <span className="text-muted-foreground font-light">({user?.alias})</span>
+                <span className="text-muted-foreground font-light text-sm">({user?.alias})</span>
             </h1>
             {entries.map(({ match, prediction }: any) => (
                 <div

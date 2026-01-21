@@ -51,7 +51,7 @@ export default function MatchRow({
         <span>{match.venue}</span>
 
         {isLocked ? (
-          <span className="font-bold text-green-600">
+          <span className="font-bold ">
             Final {match.result?.home} - {match.result?.away}
           </span>
         ) : (
