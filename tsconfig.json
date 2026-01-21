@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "src/app/api/restore/route.js", "src/lib/auth.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,11 +1,11 @@
 "use client";
 
 import MatchRow from "./MatchRow";
-import { Group, Match, MatchesProps, Prediction } from "@/lib/types";
+import { Group, Match, Prediction } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function MatchesList({ data, session, predictions }: MatchesProps) {
+export default function MatchesList({ data, session, predictions }: any) {
   
   const router = useRouter();
 

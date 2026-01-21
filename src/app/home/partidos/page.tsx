@@ -1,36 +1,57 @@
+// app/(whatever)/matches/page.tsx
 import Prediction from "@/models/Prediction";
+import Match from "@/models/Match";
 import { connectToDB } from "@/lib/database";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import MatchesList from "./MatchesList";
-import NewMatchForm from "./NewMatchForm";
 
 export default async function MatchesPage() {
-  const session = await getServerSession(authConfig);
+  const session: any = await getServerSession(authConfig);
 
-  const matchesRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/matches`, {
-    cache: "no-store"
-  });
+  await connectToDB();
 
-  const matchesData = await matchesRes.json();
+  // Traer todos los partidos desde MongoDB
+  const matches = JSON.parse(JSON.stringify(await Match.find({ event: session?.user?.event }).lean()));
 
-  let predictions = [];
+  // Agrupar por grupo y dar el formato que quieres
+  const grouped = matches.reduce((acc: any, match: any, index: number) => {
+    const groupKey = match.group?.replace("Grupo ", "").trim(); // "Grupo A" -> "A"
+
+    if (!acc[groupKey]) {
+      acc[groupKey] = { group: groupKey, matches: [] };
+    }
+
+    acc[groupKey].matches.push({
+      id: `${groupKey}${acc[groupKey].matches.length + 1}`, // ej: A1, A2...
+      group: groupKey,
+      date: new Date(match.datetime).toISOString().split("T")[0],
+      time: new Date(match.datetime).toISOString().split("T")[1].slice(0, 5),
+      venue: match.sede,
+      status: match.status,
+      result: match.result ?? null,
+      home: match.home,
+      away: match.away,
+    });
+
+    return acc;
+  }, {});
+
+  const matchesData = {
+    groups: Object.values(grouped),
+  };
+
+  let predictions: any[] = [];
 
   if (session) {
-    await connectToDB();
-    predictions = JSON.parse(JSON.stringify(
-      await Prediction.find({ userId: session.user.id }).lean()
-    ));
+    predictions = JSON.parse(
+      JSON.stringify(await Prediction.find({ userId: session.user.id }).lean())
+    );
   }
 
   return (
-    <div className="p-4 space-y-4">
-      <NewMatchForm />
-      <MatchesList
-        data={matchesData}
-        session={session}
-        predictions={predictions} // ← ahora es JSON válido
-      />
+    <div className="px-4 space-y-4">
+      <MatchesList data={matchesData} session={session} predictions={predictions} />
     </div>
   );
 }

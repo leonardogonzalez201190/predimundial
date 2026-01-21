@@ -3,12 +3,11 @@ import Prediction from "@/models/Prediction";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import { NextResponse } from "next/server";
-import { LeanPrediction } from "@/lib/types";
 
 export async function POST(request: Request) {
   await connectToDB();
 
-  const session = await getServerSession(authConfig);
+  const session : any = await getServerSession(authConfig);
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

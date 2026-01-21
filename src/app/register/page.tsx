@@ -32,9 +32,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center h-screen">
-      <img src="/mundial.png" alt="" className="w-24 dark:bg-white"/>
-      <h2>Registro</h2>
+    <div className="flex flex-col gap-4 items-center justify-center h-screen text-xs">
+      <h2 className="text-lg font-bold">Registro</h2>
 
       <form onSubmit={handleRegister} className="flex flex-col gap-4">
         <Input

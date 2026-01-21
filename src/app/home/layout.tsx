@@ -3,9 +3,9 @@ import { authConfig } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import LogoutButton from "@/components/LogoutButton";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { CalendarCheck2, TrendingUp, UserRound } from "lucide-react";
+import { CalendarCheck2, TrendingUp } from "lucide-react";
+import { EVENTS } from "@/lib/constants";
 
 export default async function HomeLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authConfig);
@@ -23,29 +23,28 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
           dark:bg-black/40
         "
       >
-
-        <nav className="items-center gap-2 hidden sm:flex">
-          <UserRound className="w-4 h-4 mr-1" />
-          <h1 className="font-bold">{session.user?.alias}</h1>
-        </nav>
-
-
-        <Link className={buttonVariants({ variant: "outline", size: "sm" })} href="/home">
-          <TrendingUp className="w-4 h-4 mr-1" />
-          Posiciones
-        </Link>
-
-        <Link className={buttonVariants({ variant: "outline", size: "sm", className: "text-end" })} href="/home/partidos">
-          <CalendarCheck2 className="w-4 h-4 mr-1" />
-          Partidos
-        </Link>
-
+        <h1 className="text-sm font-bold">{EVENTS[Number(session.user.event) as keyof typeof EVENTS]}</h1>
         <div className="flex gap-2">
           <ThemeToggle />
           <LogoutButton />
         </div>
 
       </header>
+
+      <header className="flex flex-col-[1fr_auto_auto] gap-4 items-center p-4">
+
+        <h1 className="font-bold truncate flex-1">{session.user?.username}</h1>
+        <Link className="flex items-center underline underline-offset-4" href="/home">
+          <TrendingUp className="w-4 h-4 mr-1" />
+          Posiciones
+        </Link>
+        <Link className="flex items-center underline underline-offset-4" href="/home/partidos">
+          <CalendarCheck2 className="w-4 h-4 mr-1" />
+          Partidos
+        </Link>
+
+      </header>
+
 
       {/* 🔹 margen superior para que el contenido no quede tapado */}
       {children}

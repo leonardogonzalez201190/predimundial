@@ -3,6 +3,7 @@ import { authConfig } from "@/lib/auth";
 import { connectToDB } from "@/lib/database";
 import User from "@/models/User";
 import Prediction from "@/models/Prediction";
+import Match from "@/models/Match"; // ✅ nuevo
 import { evaluatePrediction } from "@/lib/score";
 import { redirect } from "next/navigation";
 
@@ -10,31 +11,39 @@ import type { LeanUser, LeanPrediction, MatchResult } from "@/lib/types";
 import Link from "next/link";
 
 export default async function RankingPage() {
+
   const session = await getServerSession(authConfig);
+
   if (!session) return redirect("/login");
 
   await connectToDB();
 
-  // Obtener partidos oficiales
-  const matchesResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/matches`,
-    { cache: "no-store" }
-  );
+  // ✅ Obtener partidos oficiales directamente desde MongoDB (sin fetch)
+  const matchesRaw = await Match.find({ event: session?.user?.event }).lean();
 
-  const matchesData = await matchesResponse.json();
+  // Solo partidos que ya tienen resultado
+  const officialMatchesWithResults: MatchResult[] = matchesRaw
+    .filter((match: any) => match.result !== null)
+    .map((match: any) => ({
+      id: match.id, // si tu modelo tiene "id"
+      group: match.group,
+      date: match.datetime ? new Date(match.datetime).toISOString().split("T")[0] : "",
+      time: match.datetime ? new Date(match.datetime).toISOString().split("T")[1].slice(0, 5) : "",
+      venue: match.sede,
+      status: match.status,
+      result: match.result,
+      home: match.home,
+      away: match.away,
+    }));
 
-  const officialMatchesWithResults: MatchResult[] = matchesData.groups
-    .flatMap((group: any) => group.matches)
-    .filter((match: any) => match.result !== null);
-
-  // Obtener usuarios con tipado explícito en el map
+  // Obtener usuarios
   const usersRaw = await User.find().lean<LeanUser[]>();
   const users = usersRaw.map((user: LeanUser) => ({
     id: user._id!.toString(),
     alias: user.alias,
   }));
 
-  // Obtener predicciones tipadas
+  // Obtener predicciones
   const predsRaw = await Prediction.find().lean<LeanPrediction[]>();
   const predictions = predsRaw.map((p: LeanPrediction) => ({
     id: p._id!.toString(),
@@ -82,8 +91,7 @@ export default async function RankingPage() {
   ranking.sort((a, b) => b.points - a.points);
 
   return (
-    <div className="w-full p-4 sm:px-0 space-y-4">
-
+    <div className="w-full px-4 sm:px-0 space-y-4">
       <div className="text-sm text-muted-foreground p-3 bg-card border rounded-md">
         El ranking estará disponible a medida que los partidos se vayan cerrando.
         Una vez finalizados los encuentros y publicados los resultados oficiales,
@@ -107,14 +115,16 @@ export default async function RankingPage() {
           {ranking.map((userRanking, index) => (
             <tr key={userRanking.id} className="border-b">
               <td className="p-2 font-bold">{index + 1}</td>
-              <td className="p-2 truncate">{userRanking.alias}</td>
+              <td className="p-2">{userRanking.alias}</td>
               <td className="p-2 text-center font-bold">{userRanking.points}</td>
               <td className="p-2 text-center">{userRanking.predictions}</td>
               <td className="p-2 text-end">
                 <Link
                   className="text-blue-500 hover:text-blue-600"
                   href={`/details?userId=${userRanking.id}`}
-                >Ver detalles</Link>
+                >
+                  Detalles
+                </Link>
               </td>
             </tr>
           ))}

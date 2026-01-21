@@ -42,7 +42,7 @@ export default function NewMatchForm() {
                 size="sm"
                 onClick={() => setShowForm(!showForm)}>
                 {showForm ? <X /> : <Plus />}
-                {showForm ? "Close" : "New Partido"}
+                {showForm ? "Close" : "Nuevo Partido"}
             </Button>
             {showForm && <div className="h-80 flex flex-col py-3">
                 <h1 className="font-bold text-end">Agregar Partido</h1>
@@ -52,12 +52,6 @@ export default function NewMatchForm() {
                         options={groups}
                         value={values.group}
                         onChange={(value: string) => setValues({ ...values, group: value })}
-                    />
-                    <FormSelect
-                        label="Sede"
-                        options={sedes}
-                        value={values.home}
-                        onChange={(value: string) => setValues({ ...values, home: value })}
                     />
                 </form>
             </div>}

@@ -61,7 +61,7 @@ export default function MatchRow({
 
       <form
         onSubmit={handleVote}
-        className="grid grid-cols-5 sm:grid-cols-7 gap-2 items-center text-center"
+        className="grid grid-cols-5 gap-2 items-center text-center"
       >
 
         {/* Flag A + name below on mobile */}
@@ -72,15 +72,11 @@ export default function MatchRow({
             width={52}
             height={36}
           />
-          <span className="text-xs font-semibold mt-1 md:hidden">
+          <span className="text-xs font-semibold mt-1">
             {match.home.name}
           </span>
         </div>
 
-        {/* Name A (desktop only) */}
-        <div className="text-sm font-semibold truncate hidden md:block">
-          {match.home.name}
-        </div>
 
         {/* Input / valor A */}
         <div>
@@ -123,11 +119,6 @@ export default function MatchRow({
           )}
         </div>
 
-        {/* Name B (desktop only) */}
-        <div className="text-sm font-semibold truncate hidden md:block">
-          {match.away.name}
-        </div>
-
         {/* Flag B + name below on mobile */}
         <div className="flex flex-col items-center">
           <Image
@@ -136,7 +127,7 @@ export default function MatchRow({
             width={52}
             height={36}
           />
-          <span className="text-xs font-semibold mt-1 md:hidden">
+          <span className="text-xs font-semibold mt-1">
             {match.away.name}
           </span>
         </div>
