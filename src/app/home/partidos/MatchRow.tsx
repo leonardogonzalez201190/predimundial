@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { MatchRowProps } from "@/lib/types";
+import MatchPredictions from "./MatchPredictions";
+import { AlertTriangle, Check, SquareCheck } from "lucide-react";
+import VoteStatusBadge from "@/components/VoteStatusBadge";
 
 export default function MatchRow({
   match,
@@ -44,7 +47,7 @@ export default function MatchRow({
     <div className="rounded-lg p-3 space-y-3 bg-secondary">
 
       {/* Header */}
-      <div className="flex justify-between text-xs">
+      <div className="flex items-center justify-between text-xs">
         <span>{match.venue}</span>
 
         {isLocked ? (
@@ -96,7 +99,7 @@ export default function MatchRow({
         {/* Vote / bloqueado */}
         <div className="flex justify-center">
           {session && !isLocked ? (
-            <Button variant="outline" type="submit" size="sm" className="px-5">
+            <Button type="submit" size="sm" className="px-5">
               Votar
             </Button>
           ) : (
@@ -138,6 +141,8 @@ export default function MatchRow({
           </span>
         </div>
       </form>
+      {!isLocked && <VoteStatusBadge existingPrediction={!!existingPrediction} />}
+      {isLocked && <MatchPredictions matchId={match.id} homeName={match.home.name} awayName={match.away.name} />}
     </div>
   );
 }

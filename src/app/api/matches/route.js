@@ -8,11 +8,11 @@ const data = {
       matches: [
         {
           "id": "A1",
-          "date": "2024-06-11",
+          "date": "2026-06-11",
           "time": "19:00",
           "venue": "Los Angeles, CA",
-          "status": "finished",
-          "result": { "home": 2, "away": 1 },
+          "status": "scheduled",
+          "result": null,
           "home": { "name": "USA", "code": "US", "flagUrl": "https://flagcdn.com/us.svg" },
           "away": { "name": "Wales", "code": "GB-WLS", "flagUrl": "https://flagcdn.com/gb-wls.svg" }
         },
@@ -33,11 +33,11 @@ const data = {
       matches: [
         {
           id: "B1",
-          date: "2024-06-11",
+          date: "2026-06-11",
           time: "22:00",
           venue: "Toronto, ON",
-          status: "finished",
-          result: { "home": 2, "away": 1 },
+          status: "scheduled",
+          result: null,
           home: { name: "England", code: "GB-ENG", flagUrl: "https://flagcdn.com/gb-eng.svg" },
           away: { name: "Senegal", code: "SN", flagUrl: "https://flagcdn.com/sn.svg" }
         },
