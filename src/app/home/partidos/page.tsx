@@ -23,7 +23,7 @@ export default async function MatchesPage() {
     }
 
     acc[groupKey].matches.push({
-      id: `${groupKey}${acc[groupKey].matches.length + 1}`, // ej: A1, A2...
+      id: match._id.toString(),
       group: groupKey,
       date: new Date(match.datetime).toISOString().split("T")[0],
       time: new Date(match.datetime).toISOString().split("T")[1].slice(0, 5),

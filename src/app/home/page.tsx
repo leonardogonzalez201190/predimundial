@@ -25,7 +25,7 @@ export default async function RankingPage() {
   const officialMatchesWithResults: MatchResult[] = matchesRaw
     .filter((match: any) => match.result !== null)
     .map((match: any) => ({
-      id: match.id, // si tu modelo tiene "id"
+      id: match._id.toString(), // si tu modelo tiene "id"
       group: match.group,
       date: match.datetime ? new Date(match.datetime).toISOString().split("T")[0] : "",
       time: match.datetime ? new Date(match.datetime).toISOString().split("T")[1].slice(0, 5) : "",
@@ -66,6 +66,7 @@ export default async function RankingPage() {
       const match = officialMatchesWithResults.find(
         (match) => match.id === prediction.matchId
       );
+
       if (!match) return;
 
       totalPoints += evaluatePrediction(

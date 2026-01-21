@@ -50,6 +50,7 @@ export default function MatchesList({ data, session, predictions }: any) {
 
           <div className="space-y-4">
             {group.matches.map((match: Match) => {
+              
               const existing = predictions.find(
                 (p: Prediction) => p.matchId === match.id
               );

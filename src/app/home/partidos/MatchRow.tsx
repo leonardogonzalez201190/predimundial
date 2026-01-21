@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { MatchRowProps } from "@/lib/types";
 import MatchPredictions from "./MatchPredictions";
-import { AlertTriangle, Check, SquareCheck } from "lucide-react";
 import VoteStatusBadge from "@/components/VoteStatusBadge";
 
 export default function MatchRow({
