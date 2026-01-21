@@ -112,4 +112,4 @@ export interface CompletedMatch {
 export interface MatchResult {
   id: string;
   result: MatchScore;
-}
+}    

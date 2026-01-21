@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function MatchesList({ data, session, predictions }: MatchesProps) {
-
+  
   const router = useRouter();
 
   async function handleVote(matchId: string, home: number, away: number) {

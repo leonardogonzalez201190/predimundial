@@ -5,7 +5,6 @@ import User from "@/models/User";
 import Prediction from "@/models/Prediction";
 import { evaluatePrediction } from "@/lib/score";
 import { redirect } from "next/navigation";
-import UserPredictionsDrawer from "@/components/UserPredictionsDrawer";
 
 import type { LeanUser, LeanPrediction, MatchResult } from "@/lib/types";
 import Link from "next/link";

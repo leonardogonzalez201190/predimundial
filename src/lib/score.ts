@@ -14,7 +14,7 @@ export function evaluatePrediction(
       prediction.homeScore === result.homeScore &&
       prediction.awayScore === result.awayScore;
   
-    if (exactMatch) return 2;
+    if (exactMatch) return 3;
     if (correctWinner) return 1;
     return 0;
   }
