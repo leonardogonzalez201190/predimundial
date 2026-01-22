@@ -14,7 +14,7 @@ export default async function RankingPage() {
 
   const session = await getServerSession(authConfig);
 
-  if (!session) return redirect("/login");
+  if (!session?.active) return redirect("/login");
 
   await connectToDB();
 

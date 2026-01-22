@@ -37,6 +37,7 @@ export const authConfig: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
+
         await connectToDB();
 
         let dbUser = await User.findOne({ email: user.email });
@@ -60,25 +61,45 @@ export const authConfig: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user }: { token: any, user?: any }) {
+    async jwt({ token, user, account }) {
       const cookieStore = await cookies();
       const event = cookieStore.get("event");
+      await connectToDB();
 
-      if (user) {
-        token.id = user?.id;
-        token.username = user?.username || user?.name;
-        token.alias = user?.alias;
+      // Si viene de Google, user.id NO es tu MongoID, es el id de Google
+      if (account?.provider === "google") {
+        const dbUser = await User.findOne({ email: token.email });
+
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.username = dbUser.username;
+          token.alias = dbUser.alias;
+          token.event = event ? Number(event.value) : undefined;
+        }
+      }
+
+      // Si viene de credentials, ahí sí user.id ya es tu MongoID
+      if (user && account?.provider === "credentials") {
+        token.id = user.id;
+        token.username = user.username;
+        token.alias = user.alias;
         token.event = event ? Number(event.value) : undefined;
       }
 
       return token;
     },
 
-    async session({ session, token }: { session: any, token: any }) {
+    async session({ session, token }) {
+      await connectToDB();
+
+      const isActive = await User.exists({ _id: token.id });
+
       session.user.id = token.id as string;
       session.user.username = token.username as string;
-      session.user.alias = (token.alias as string) || "Google";
+      session.user.alias = token.alias as string;
       session.user.event = token.event as number;
+      session.active = Boolean(isActive);
+
       return session;
     },
   },

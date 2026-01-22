@@ -1,16 +1,12 @@
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import LogoutButton from "@/components/LogoutButton";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { CalendarCheck2, ListCheck, TrendingUp, UserRound } from "lucide-react";
+import { ListCheck } from "lucide-react";
 import BackButton from "@/components/BackButton";
 
 export default async function HomeLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authConfig);
-  if (!session) redirect("/login");
+  if (!session?.user) redirect("/login");
 
   return (
     <div className="min-h-screen max-w-2xl mx-auto flex flex-col relative text-[12px]">

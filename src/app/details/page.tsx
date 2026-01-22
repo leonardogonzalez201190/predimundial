@@ -2,37 +2,35 @@ import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { connectToDB } from "@/lib/database";
-import type { LeanPrediction, LeanUser, MatchResult } from "@/lib/types";
+import type { LeanPrediction, LeanUser } from "@/lib/types";
 import Prediction from "@/models/Prediction";
 import Image from "next/image";
 import User from "@/models/User";
+import Match from "@/models/Match";
 
 export default async function DetailsPage({ searchParams }: { searchParams: { userId: string } }) {
     const { userId } = await searchParams;
 
     const session = await getServerSession(authConfig);
-    if (!session) return redirect("/login");
+    if (!session?.active) return redirect("/login");
 
     await connectToDB();
 
-    // Obtener partidos oficiales
-    const matchesResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/matches`,
-        { cache: "no-store" }
-    );
+    const [user, matchesRaw, predsRaw] = await Promise.all([
+        User.findById(userId).select("username alias").lean<LeanUser>(),
+        Match.find({
+            event: session?.user?.event,
+            datetime: {
+                $lte: new Date(),
+            },
+        }).select("home away result").lean(),
+        Prediction.find({ userId })
+            .select("matchId homeScore awayScore")
+            .lean<LeanPrediction[]>(),
+    ]);
 
-    const user = await User.findById(userId).select("username alias").lean<LeanUser>();
-    const matchesData = await matchesResponse.json();
-
-    const matches: MatchResult[] = matchesData.groups
-        .flatMap((group: any) => group.matches)
-        .filter((match: any) => match.result !== null);
-
-    // Obtener predicciones tipadas
-    const predsRaw = await Prediction.find({ userId }).lean<LeanPrediction[]>();
-
-    const entries = matches.map((match: any) => {
-        const prediction = predsRaw.find((p: any) => p.matchId === match.id);
+    const matches = matchesRaw.map((match: any) => {
+        const prediction = predsRaw.find((pred: any) => pred.matchId === match._id.toString());
         return { match, prediction };
     });
 
@@ -42,7 +40,12 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
                 {user?.username}/
                 <span className="text-muted-foreground font-light text-sm">({user?.alias})</span>
             </h1>
-            {entries.map(({ match, prediction }: any) => (
+            {matches.length === 0 && (
+                <p className="text-center text-muted-foreground">
+                    No hay partidos finalizados para mostrar
+                </p>
+            )}
+            {matches.map(({ match, prediction }: any) => (
                 <div
                     key={match.id}
                     className="bg-secondary rounded-lg p-3 space-y-3"

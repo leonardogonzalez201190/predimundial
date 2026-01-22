@@ -7,7 +7,7 @@ import { authConfig } from "@/lib/auth";
 import MatchesList from "./MatchesList";
 
 export default async function MatchesPage() {
-  const session: any = await getServerSession(authConfig);
+  const session = await getServerSession(authConfig);
 
   await connectToDB();
 

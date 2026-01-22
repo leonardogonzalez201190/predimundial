@@ -81,6 +81,7 @@ export default function MatchRow({
         <div>
           {session && !isLocked ? (
             <Input
+              min={0}
               name={`home-${match.id}`}
               type="number"
               defaultValue={existingPrediction?.homeScore ?? ""}
@@ -108,6 +109,7 @@ export default function MatchRow({
         <div>
           {session && !isLocked ? (
             <Input
+              min={0}
               name={`away-${match.id}`}
               type="number"
               defaultValue={existingPrediction?.awayScore ?? ""}
