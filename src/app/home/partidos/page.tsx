@@ -5,17 +5,21 @@ import { connectToDB } from "@/lib/database";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import MatchesList from "./MatchesList";
+import { serialize } from "@/lib/utils";
 
 export default async function MatchesPage() {
   const session = await getServerSession(authConfig);
 
   await connectToDB();
 
+  let predictions: any[] = [];
   // Traer todos los partidos desde MongoDB
-  const matches = JSON.parse(JSON.stringify(await Match.find({ event: session?.user?.event }).lean()));
+  const matches = await Match.find({ event: session?.user?.event }).lean();
+  if (session) predictions = await Prediction.find({ userId: session.user.id }).lean();
 
   // Agrupar por grupo y dar el formato que quieres
   const grouped = matches.reduce((acc: any, match: any, index: number) => {
+
     const groupKey = match.group?.replace("Grupo ", "").trim(); // "Grupo A" -> "A"
 
     if (!acc[groupKey]) {
@@ -41,17 +45,13 @@ export default async function MatchesPage() {
     groups: Object.values(grouped),
   };
 
-  let predictions: any[] = [];
-
-  if (session) {
-    predictions = JSON.parse(
-      JSON.stringify(await Prediction.find({ userId: session.user.id }).lean())
-    );
-  }
-
   return (
     <div className="px-4 space-y-4">
-      <MatchesList data={matchesData} session={session} predictions={predictions} />
+      <MatchesList
+        predictions={serialize(predictions)}
+        data={serialize(matchesData)}
+        session={session}
+      />
     </div>
   );
 }

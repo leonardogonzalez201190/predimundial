@@ -31,7 +31,9 @@ export const MatchSchema = new Schema(
 
     result: { type: Schema.Types.Mixed, default: null },
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
 const Match = models?.Match || model("Match", MatchSchema);

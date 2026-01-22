@@ -20,7 +20,9 @@ const PredictionSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
 // 🔥 clave para evitar duplicados por usuario + partido
