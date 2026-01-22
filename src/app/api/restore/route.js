@@ -279,12 +279,12 @@ export async function GET(request) {
 
         await connectToDB();
         
-        await Match.deleteMany({ event: 1 });
+        // await Match.deleteMany({ event: 1 });
 
-        const createdMatches = await Match.insertMany(matchesToAdd);      
+        // const createdMatches = await Match.insertMany(matchesToAdd);      
 
         return NextResponse.json(
-            { ok: true, data: createdMatches },
+            { ok: true, data: matchesToAdd },
             { status: 201 }
         );
     } catch (error) {

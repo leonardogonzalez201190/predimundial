@@ -8,6 +8,7 @@ import Image from "next/image";
 import User from "@/models/User";
 import Match from "@/models/Match";
 import { evaluatePrediction } from "@/lib/score";
+import mongoose from "mongoose";
 
 export default async function DetailsPage({ searchParams }: { searchParams: { userId: string } }) {
     const { userId } = await searchParams;
@@ -17,35 +18,61 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
 
     await connectToDB();
 
-    const [user, matchesRaw, predsRaw] = await Promise.all([
-        User.findById(userId).select("username alias").lean<LeanUser>(),
-        Match.find({
-            event: session?.user?.event,
-            result: {
-                $ne: null,
+    const user = await User.findById(userId).select("username alias").lean<LeanUser>();
+
+    const rows = await Prediction.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+        // Join con Match
+        {
+            $lookup: {
+                from: "matches",
+                localField: "matchId",
+                foreignField: "_id",
+                as: "match",
             },
-        }).select("home away result").lean(),
-        Prediction.find({ userId })
-            .select("matchId homeScore awayScore")
-            .lean<LeanPrediction[]>(),
+        },
+        { $unwind: "$match" },
+
+        // Solo partidos con resultado
+        { $match: { "match.result": { $ne: null } } },
+
+        // Solo campos necesarios
+        {
+            $project: {
+                homeScore: 1,
+                awayScore: 1,
+                match: {
+                    sede: "$match.sede",
+                    result: "$match.result",
+                    home: "$match.home", // { name, code, flagUrl }
+                    away: "$match.away", // { name, code, flagUrl }
+                },
+            },
+        },
     ]);
 
+    // Agregar score individual por cada row
     let totalScore = 0;
+    const list = rows.map((r: any) => {
+        const score = evaluatePrediction(
+            { homeScore: r.homeScore, awayScore: r.awayScore },
+            { homeScore: r.match.result.home ?? 0, awayScore: r.match.result.away ?? 0 }
+        );
 
-    const matches = matchesRaw.map((match: any) => {
-        const prediction = predsRaw.find((pred: any) => pred.matchId.toString() === match._id.toString());
-        const score = prediction ? evaluatePrediction(
-            {
-                homeScore: prediction.homeScore,
-                awayScore: prediction.awayScore
-            },
-            {
-                homeScore: match.result.home ?? 0,
-                awayScore: match.result.away ?? 0,
-            }
-        ) : 0;
         totalScore += score;
-        return { match, prediction, score };
+
+        return {
+            _id: r._id.toString(),
+            sede: r.match.sede,
+            result: r.match.result,
+            home: r.match.home,
+            away: r.match.away,
+            prediction: {
+                homeScore: r.homeScore,
+                awayScore: r.awayScore,
+            },
+            score,
+        };
     });
 
     return (
@@ -53,27 +80,27 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
             <h1 className="whitespace-nowrap truncate grid grid-cols-[auto_1fr_auto] items-center gap-1">
                 <span className="font-bold text-xl truncate">{user?.username}</span>
                 <span className="text-muted-foreground font-light text-sm pt-1.5 truncate">({user?.alias})</span>
-                <span className="text-sm font-bold">Total ({totalScore})</span>
+                <span className="text-muted-foreground font-light text-sm pt-1.5 truncate">Total: {totalScore}</span>
             </h1>
-            {matches.length === 0 ? (
+            {list.length === 0 ? (
                 <p className="text-center text-muted-foreground">
                     No hay partidos finalizados para mostrar
                 </p>
             ) : (
-                matches.map(({ match, prediction, score }: any) => (
+                list.map((item: any) => (
                     <div
-                        key={match._id.toString()}
+                        key={item._id}
                         className="bg-secondary rounded-lg p-3 space-y-3"
                     >
                         {/* Header */}
                         <div className="text-xs flex justify-between">
                             <span>
-                                {match.home.name} vs {match.away.name}
+                                {item.home.name} vs {item.away.name}
                             </span>
 
-                            {match.result && (
+                            {item.result && (
                                 <div className="text-xs text-green-600 font-semibold">
-                                    Final: {match.result.home} - {match.result.away} (+{score})
+                                    Final: {item.result.home} - {item.result.away} (+{item.score})
                                 </div>
                             )}
                         </div>
@@ -83,19 +110,19 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
                             {/* Home + texto debajo */}
                             <div className="flex flex-col justify-center items-center col-span-2">
                                 <Image
-                                    src={match.home.flagUrl}
-                                    alt={match.home.name}
+                                    src={item.home.flagUrl}
+                                    alt={item.home.name}
                                     width={44}
                                     height={32}
                                 />
                                 <span className="text-xs sm:text-sm font-semibold mt-1 truncate">
-                                    {match.home.name}
+                                    {item.home.name}
                                 </span>
                             </div>
 
                             {/* Score local */}
                             <div className="font-bold text-lg">
-                                {prediction ? prediction.homeScore : "-"}
+                                {item.prediction ? item.prediction.homeScore : "-"}
                             </div>
 
                             {/* Separador */}
@@ -103,19 +130,19 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
 
                             {/* Score visitante */}
                             <div className="font-bold text-lg">
-                                {prediction ? prediction.awayScore : "-"}
+                                {item.prediction ? item.prediction.awayScore : "-"}
                             </div>
 
                             {/* Visitante + texto debajo */}
                             <div className="flex flex-col justify-center items-center col-span-2">
                                 <Image
-                                    src={match.away.flagUrl}
-                                    alt={match.away.name}
+                                    src={item.away.flagUrl}
+                                    alt={item.away.name}
                                     width={44}
                                     height={32}
                                 />
                                 <span className="text-xs sm:text-sm font-semibold mt-1 truncate">
-                                    {match.away.name}
+                                    {item.away.name}
                                 </span>
                             </div>
                         </div>

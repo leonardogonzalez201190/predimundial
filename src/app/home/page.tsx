@@ -1,13 +1,10 @@
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import { connectToDB } from "@/lib/database";
-import User from "@/models/User";
 import Prediction from "@/models/Prediction";
-import Match from "@/models/Match"; // ✅ nuevo
 import { evaluatePrediction } from "@/lib/score";
 import { redirect } from "next/navigation";
 
-import type { LeanUser, LeanPrediction, MatchResult } from "@/lib/types";
 import Link from "next/link";
 
 export default async function RankingPage() {
@@ -18,80 +15,71 @@ export default async function RankingPage() {
 
   await connectToDB();
 
-  // ✅ Obtener partidos oficiales directamente desde MongoDB (sin fetch)
-  const matchesRaw = await Match.find({ event: session?.user?.event }).lean();
+  const predictions = await Prediction.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    { $unwind: "$user" },
 
-  // Solo partidos que ya tienen resultado
-  const officialMatchesWithResults: MatchResult[] = matchesRaw
-    .filter((match: any) => match.result !== null)
-    .map((match: any) => ({
-      id: match._id.toString(), // si tu modelo tiene "id"
-      group: match.group,
-      date: match.datetime ? new Date(match.datetime).toISOString().split("T")[0] : "",
-      time: match.datetime ? new Date(match.datetime).toISOString().split("T")[1].slice(0, 5) : "",
-      venue: match.sede,
-      status: match.status,
-      result: match.result,
-      home: match.home,
-      away: match.away,
-    }));
+    {
+      $lookup: {
+        from: "matches",
+        localField: "matchId",
+        foreignField: "_id",
+        as: "match",
+      },
+    },
+    { $unwind: "$match" },
 
-  // Obtener usuarios
-  const usersRaw = await User.find().lean<LeanUser[]>();
-  const users = usersRaw.map((user: LeanUser) => ({
-    id: user._id!.toString(),
-    alias: user.alias,
-  }));
+    {
+      $match: {
+        // "match.result": { $ne: null },
+        "match.event": session?.user?.event,
+      },
+    },
 
-  // Obtener predicciones
-  const predsRaw = await Prediction.find().lean<LeanPrediction[]>();
-  const predictions = predsRaw.map((p: LeanPrediction) => ({
-    id: p._id!.toString(),
-    userId: p.userId!.toString(),
-    homeScore: p.homeScore,
-    awayScore: p.awayScore,
-    matchId: p.matchId.toString(),
-  }));
+    {
+      $project: {
+        homeScore: 1,
+        awayScore: 1,
+        "user._id": 1,
+        "user.alias": 1,
+        "match.result": 1,
+        "match.event": 1,
+      },
+    },
+  ]);
 
-  // Calcular ranking
-  const ranking = users.map((user) => {
-    const userPredictions = predictions.filter(
-      (prediction) => prediction.userId === user.id
-    );
+  const userScored: Record<string, any> = {};
 
-    let totalPoints = 0;
-    let matchesCount = 0;
+  for (const p of predictions) {
+    const userId = p.user._id.toString();
 
-    userPredictions.forEach((prediction) => {
-      const match = officialMatchesWithResults.find(
-        (match) => match.id === prediction.matchId.toString()
-      );
+    if (!userScored[userId]) {
+      userScored[userId] = {
+        predictions: 0,
+        alias: p.user.alias,
+        score: 0,
+      };
+    }
 
-      if (!match) return;
+    const score = p.match.result ? evaluatePrediction(
+      { homeScore: p.homeScore, awayScore: p.awayScore },
+      { homeScore: p.match.result.home ?? 0, awayScore: p.match.result.away ?? 0 }
+    ) : 0;
 
-      totalPoints += evaluatePrediction(
-        { 
-          homeScore: prediction.homeScore, 
-          awayScore: prediction.awayScore },
-        {
-          homeScore: match.result.home ?? 0,
-          awayScore: match.result.away ?? 0,
-        }
-      );
+    userScored[userId].score += score;
+    userScored[userId].predictions += 1;
+  }
 
-      matchesCount++;
-    });
-
-    return {
-      id: user.id,
-      alias: user.alias,
-      predictions: matchesCount,
-      points: totalPoints,
-    };
-  });
-
-  // Ordenar por puntos desc
-  ranking.sort((a, b) => b.points - a.points);
+  const ranking = Object.entries(userScored)
+    .map(([userId, data]) => ({ userId, ...data }))
+    .sort((a, b) => b.score - a.score);
 
   return (
     <div className="w-full px-4 sm:px-0 space-y-4">
@@ -101,13 +89,13 @@ export default async function RankingPage() {
         podrás ver las puntuaciones actualizadas y compararlas con otros participantes.
       </div>
 
-      <h1 className="font-bold">Ranking General</h1>
+      <h1 className="font-bold text-xl truncate">Ranking General</h1>
 
       <table className="w-full text-left border-collapse text-[12px] bg-card">
         <thead>
           <tr className="border-b text-card-foreground bg-muted">
-            <th className="p-1">#</th>
-            <th className="p-1">Alias</th>
+            <th className="p-1 text-center">#</th>
+            <th className="p-1 px-2">Alias</th>
             <th className="p-1 text-center">Puntos</th>
             <th className="p-1 text-center">Predicciones</th>
             <th className="text-end p-1">Detalles</th>
@@ -116,15 +104,15 @@ export default async function RankingPage() {
 
         <tbody>
           {ranking.map((userRanking, index) => (
-            <tr key={userRanking.id} className="border-b">
+            <tr key={userRanking.userId} className="border-b">
               <td className="p-1 px-2 font-bold">{index + 1}</td>
               <td className="p-1 px-2">{userRanking.alias}</td>
-              <td className="p-1 px-2 text-center font-bold">{userRanking.points}</td>
+              <td className="p-1 px-2 text-center font-bold">{userRanking.score}</td>
               <td className="p-1 px-2 text-center">{userRanking.predictions}</td>
               <td className="p-1 px-2 text-end">
                 <Link
                   className="text-blue-500 hover:text-blue-600"
-                  href={`/details?userId=${userRanking.id}`}
+                  href={`/details?userId=${userRanking.userId}`}
                 >
                   Detalles
                 </Link>

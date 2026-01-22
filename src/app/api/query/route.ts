@@ -1,21 +1,60 @@
 import Prediction from "@/models/Prediction";
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
+import { evaluatePrediction } from "@/lib/score";
 
 export async function GET() {
   try {
-    const predictions = await Prediction.find({ matchId: { $type: "string" } }).lean();
+    const rows = await Prediction.aggregate([
+      // Join con Match
+      {
+        $lookup: {
+          from: "matches",
+          localField: "matchId",
+          foreignField: "_id",
+          as: "match",
+        },
+      },
+      { $unwind: "$match" },
 
-    for (const p of predictions as any[]) {
-      await Prediction.updateOne(
-        { _id: p._id },
-        { $set: { matchId: new mongoose.Types.ObjectId(p.matchId) } }
+      // Solo partidos con resultado
+      { $match: { "match.result": { $ne: null } } },
+
+      // Solo campos necesarios
+      {
+        $project: {
+          homeScore: 1,
+          awayScore: 1,
+          match: {
+            sede: "$match.sede",
+            result: "$match.result",
+            home: "$match.home", // { name, code, flagUrl }
+          },
+        },
+      },
+    ]);
+
+    // Agregar score individual por cada row
+    const list = rows.map((r: any) => {
+      const score = evaluatePrediction(
+        { homeScore: r.homeScore, awayScore: r.awayScore },
+        { homeScore: r.match.result.home ?? 0, awayScore: r.match.result.away ?? 0 }
       );
-    }
 
-    return NextResponse.json({ ok: true, updated: predictions.length });
+      return {
+        sede: r.match.sede,
+        result: r.match.result,
+        home: r.match.home,
+        prediction: {
+          homeScore: r.homeScore,
+          awayScore: r.awayScore,
+        },
+        score,
+      };
+    });
+
+    return NextResponse.json({ list });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Error migrando" }, { status: 500 });
+    return NextResponse.json({ error: "Error listando predicciones" }, { status: 500 });
   }
 }

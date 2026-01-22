@@ -31,7 +31,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
 
       </header>
 
-      <header className="flex flex-col-[1fr_auto_auto] gap-4 items-center p-4">
+      <header className="flex flex-col-[1fr_auto_auto] gap-4 items-center p-4 sm:px-0">
 
         <h1 className="font-bold truncate flex-1">{session.user?.username}</h1>
         <Link className="flex items-center underline underline-offset-4" href="/home">
