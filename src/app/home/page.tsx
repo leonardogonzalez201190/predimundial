@@ -70,7 +70,9 @@ export default async function RankingPage() {
       if (!match) return;
 
       totalPoints += evaluatePrediction(
-        { homeScore: prediction.homeScore, awayScore: prediction.awayScore },
+        { 
+          homeScore: prediction.homeScore, 
+          awayScore: prediction.awayScore },
         {
           homeScore: match.result.home ?? 0,
           awayScore: match.result.away ?? 0,

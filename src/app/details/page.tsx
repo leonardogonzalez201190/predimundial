@@ -7,6 +7,7 @@ import Prediction from "@/models/Prediction";
 import Image from "next/image";
 import User from "@/models/User";
 import Match from "@/models/Match";
+import { evaluatePrediction } from "@/lib/score";
 
 export default async function DetailsPage({ searchParams }: { searchParams: { userId: string } }) {
     const { userId } = await searchParams;
@@ -20,8 +21,8 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
         User.findById(userId).select("username alias").lean<LeanUser>(),
         Match.find({
             event: session?.user?.event,
-            datetime: {
-                $lte: new Date(),
+            result: {
+                $ne: null,
             },
         }).select("home away result").lean(),
         Prediction.find({ userId })
@@ -29,26 +30,37 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
             .lean<LeanPrediction[]>(),
     ]);
 
-    let existMath = false;
+    let totalScore = 0;
 
-    const matches = predsRaw.map((pred: any) => {
-        const match = matchesRaw.find((match: any) => match._id.toString() === pred.matchId);
-        if (match) existMath = true;
-        return { match, prediction: pred };
+    const matches = matchesRaw.map((match: any) => {
+        const prediction = predsRaw.find((pred: any) => pred.matchId === match._id.toString());
+        const score = prediction ? evaluatePrediction(
+            {
+                homeScore: prediction.homeScore,
+                awayScore: prediction.awayScore
+            },
+            {
+                homeScore: match.result.home ?? 0,
+                awayScore: match.result.away ?? 0,
+            }
+        ) : 0;
+        totalScore += score;
+        return { match, prediction, score };
     });
 
     return (
         <div className="flex flex-col gap-3 p-4">
-            <h1 className="whitespace-nowrap truncate text-xl">
-                {user?.username}/
-                <span className="text-muted-foreground font-light text-sm">({user?.alias})</span>
+            <h1 className="whitespace-nowrap truncate grid grid-cols-[auto_1fr_auto] items-center gap-1">
+                <span className="font-bold text-xl">{user?.username}</span>
+                <span className="text-muted-foreground font-light text-sm pt-1.5">({user?.alias})</span>
+                <span className="text-sm font-bold">Total ({totalScore})</span>
             </h1>
-            {!existMath ? (
+            {matches.length === 0 ? (
                 <p className="text-center text-muted-foreground">
                     No hay partidos finalizados para mostrar
                 </p>
             ) : (
-                matches.map(({ match, prediction }: any) => (
+                matches.map(({ match, prediction, score }: any) => (
                     <div
                         key={match._id.toString()}
                         className="bg-secondary rounded-lg p-3 space-y-3"
@@ -61,7 +73,7 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
 
                             {match.result && (
                                 <div className="text-xs text-green-600 font-semibold">
-                                    Final: {match.result.home} - {match.result.away}
+                                    Final: {match.result.home} - {match.result.away} (+{score})
                                 </div>
                             )}
                         </div>
