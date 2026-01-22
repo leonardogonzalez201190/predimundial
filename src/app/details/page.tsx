@@ -33,7 +33,7 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
     let totalScore = 0;
 
     const matches = matchesRaw.map((match: any) => {
-        const prediction = predsRaw.find((pred: any) => pred.matchId === match._id.toString());
+        const prediction = predsRaw.find((pred: any) => pred.matchId.toString() === match._id.toString());
         const score = prediction ? evaluatePrediction(
             {
                 homeScore: prediction.homeScore,

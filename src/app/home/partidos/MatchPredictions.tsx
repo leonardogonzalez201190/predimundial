@@ -38,6 +38,7 @@ export default function MatchPredictions({
       )
 
       const data: PredictionItem[] = await response.json()
+    
       setPredictions(data)
       setLoadedOnce(true)
     } catch (error) {

@@ -50,7 +50,7 @@ export default async function RankingPage() {
     userId: p.userId!.toString(),
     homeScore: p.homeScore,
     awayScore: p.awayScore,
-    matchId: p.matchId,
+    matchId: p.matchId.toString(),
   }));
 
   // Calcular ranking
@@ -64,7 +64,7 @@ export default async function RankingPage() {
 
     userPredictions.forEach((prediction) => {
       const match = officialMatchesWithResults.find(
-        (match) => match.id === prediction.matchId
+        (match) => match.id === prediction.matchId.toString()
       );
 
       if (!match) return;

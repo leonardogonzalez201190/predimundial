@@ -8,7 +8,8 @@ const PredictionSchema = new Schema(
       required: true,
     },
     matchId: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Match",
       required: true,
     },
     homeScore: {

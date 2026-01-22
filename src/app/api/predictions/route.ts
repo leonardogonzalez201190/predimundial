@@ -3,6 +3,7 @@ import Prediction from "@/models/Prediction";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 export async function POST(request: Request) {
   await connectToDB();
@@ -52,10 +53,12 @@ export async function GET(request: Request) {
       );
     }
 
-    const predictions = await Prediction.find({ matchId })
+    const predictions = await Prediction.find({ matchId: new mongoose.Types.ObjectId(matchId) })
       .populate("userId", "username alias")
       .select("homeScore awayScore userId")
       .lean();
+
+    console.log(predictions)  
 
     const result = predictions.map((p: any) => ({
       id: p._id.toString(),
