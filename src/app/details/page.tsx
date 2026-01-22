@@ -51,8 +51,8 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
     return (
         <div className="flex flex-col gap-3 p-4">
             <h1 className="whitespace-nowrap truncate grid grid-cols-[auto_1fr_auto] items-center gap-1">
-                <span className="font-bold text-xl">{user?.username}</span>
-                <span className="text-muted-foreground font-light text-sm pt-1.5">({user?.alias})</span>
+                <span className="font-bold text-xl truncate">{user?.username}</span>
+                <span className="text-muted-foreground font-light text-sm pt-1.5 truncate">({user?.alias})</span>
                 <span className="text-sm font-bold">Total ({totalScore})</span>
             </h1>
             {matches.length === 0 ? (
