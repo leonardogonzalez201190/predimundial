@@ -103,25 +103,25 @@ export default async function RankingPage() {
 
       <h1 className="font-bold">Ranking General</h1>
 
-      <table className="w-full text-left border-collapse text-[12px]">
+      <table className="w-full text-left border-collapse text-[12px] bg-card">
         <thead>
           <tr className="border-b text-card-foreground bg-muted">
-            <th className="p-2">#</th>
-            <th className="p-2">Alias</th>
-            <th className="p-2 text-center">Puntos</th>
-            <th className="p-2 text-center">Predicciones</th>
-            <th className="text-end p-2">Detalles</th>
+            <th className="p-1">#</th>
+            <th className="p-1">Alias</th>
+            <th className="p-1 text-center">Puntos</th>
+            <th className="p-1 text-center">Predicciones</th>
+            <th className="text-end p-1">Detalles</th>
           </tr>
         </thead>
 
         <tbody>
           {ranking.map((userRanking, index) => (
             <tr key={userRanking.id} className="border-b">
-              <td className="p-2 font-bold">{index + 1}</td>
-              <td className="p-2">{userRanking.alias}</td>
-              <td className="p-2 text-center font-bold">{userRanking.points}</td>
-              <td className="p-2 text-center">{userRanking.predictions}</td>
-              <td className="p-2 text-end">
+              <td className="p-1 px-2 font-bold">{index + 1}</td>
+              <td className="p-1 px-2">{userRanking.alias}</td>
+              <td className="p-1 px-2 text-center font-bold">{userRanking.points}</td>
+              <td className="p-1 px-2 text-center">{userRanking.predictions}</td>
+              <td className="p-1 px-2 text-end">
                 <Link
                   className="text-blue-500 hover:text-blue-600"
                   href={`/details?userId=${userRanking.id}`}

@@ -50,7 +50,7 @@ export default function MatchPredictions({
 
   return (
     <details
-      className="group w-full rounded-md border border-input bg-background text-xs"
+      className="group w-full rounded-md border border-input bg-card text-xs"
       onToggle={(e) =>
         handleToggle((e.currentTarget as HTMLDetailsElement).open)
       }

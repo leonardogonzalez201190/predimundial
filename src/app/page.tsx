@@ -6,7 +6,7 @@ export default async function RootPage() {
   const session = await getServerSession(authConfig);
 
   // Si hay sesión → al Home
-  if (session) redirect("/home");
+  if (session?.active) redirect("/home");
 
   // Si NO hay sesión → al Login
   redirect("/login");
