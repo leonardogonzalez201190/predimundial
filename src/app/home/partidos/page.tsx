@@ -64,7 +64,6 @@ export default async function MatchesPage({ searchParams }: { searchParams: { gr
         predictions={serialize(predictions)}
         data={serialize(matchesData)}
         session={session}
-        groups={groups}
       />
     </div>
   );

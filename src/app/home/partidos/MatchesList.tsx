@@ -1,11 +1,12 @@
 "use client";
 
+import MatchesByGroup from "@/components/MatchesByGroup";
 import MatchRow from "./MatchRow";
 import { Group, Match, Prediction } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function MatchesList({ data, session, predictions, groups }: any) {
+export default function MatchesList({ data, session, predictions }: any) {
 
   const router = useRouter();
 
@@ -42,17 +43,7 @@ export default function MatchesList({ data, session, predictions, groups }: any)
         Asegúrate de revisar tus marcadores antes de que cierre el plazo después de ese momento, tu voto quedará bloqueado y no podrá cambiarse.
       </div>
 
-      <div className="flex justify-end gap-2">
-        <strong>Filtrar por grupo:</strong>
-        <select name="group" id="group" onChange={(e) => router.push(`/home/partidos?group=${e.target.value}`)}>
-          <option value="">Todos</option>
-          {groups.map((group: string) => (
-            <option key={group} value={group}>
-              {group}
-            </option>
-          ))}
-        </select>
-      </div>
+      <MatchesByGroup />
 
       {data.groups.map((group: Group) => (
         <div key={group.group}>
