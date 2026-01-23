@@ -30,25 +30,22 @@ export default async function MatchesPage({ searchParams }: { searchParams: { gr
   const groups: string[] = [];
 
   // Agrupar por grupo y dar el formato que quieres
-  const grouped = matches.reduce((acc: any, match: any, index: number) => {
+  const grouped = matches.reduce((acc: any, match: any) => {
 
-    const groupKey = match.group?.replace("Grupo ", "").trim(); // "Grupo A" -> "A"
+    const groupKey = match.group
 
     if (!acc[groupKey]) {
       groups.push(match.group);
-      acc[groupKey] = { group: groupKey, matches: [] };
+      acc[groupKey] = {
+        group: groupKey + ": " + match.sede,
+        matches: []
+      };
     }
 
     acc[groupKey].matches.push({
       id: match._id.toString(),
-      group: groupKey,
-      date: new Date(match.datetime).toISOString().split("T")[0],
-      time: new Date(match.datetime).toISOString().split("T")[1].slice(0, 5),
-      venue: match.sede,
-      status: match.status,
-      result: match.result ?? null,
-      home: match.home,
-      away: match.away,
+      group: match.group,
+      ...match,
     });
 
     return acc;

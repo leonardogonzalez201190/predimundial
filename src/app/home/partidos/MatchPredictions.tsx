@@ -70,7 +70,7 @@ export default function MatchPredictions({
       <div className="flex flex-col">
         <table className="w-full text-left text-[12px]">
           <thead>
-            <tr className="text-card-foreground">
+            <tr>
               <th className="p-1 text-center">{homeName}</th>
               <th className="p-1 text-center">Nombre</th>
               <th className="p-1 text-center">{awayName}</th>

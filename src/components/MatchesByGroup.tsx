@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchGroups } from "@/actions";
 
@@ -20,6 +20,9 @@ export default function MatchesByGroup() {
             }
         };
         fetchOptions();
+        return () => {
+            setOptions([]);
+        };
     }, []);
 
     const handleGroupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

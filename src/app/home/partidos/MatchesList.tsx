@@ -48,7 +48,7 @@ export default function MatchesList({ data, session, predictions }: any) {
       {data.groups.map((group: Group) => (
         <div key={group.group}>
           <h2 className="font-bold mb-4 text-primary">
-            Grupo {group.group}
+            {group.group}
           </h2>
 
           <div className="space-y-4">

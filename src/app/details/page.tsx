@@ -76,14 +76,14 @@ export default async function DetailsPage({ searchParams }: { searchParams: { us
     });
 
     return (
-        <div className="flex flex-col gap-3 p-4">
+        <div className="flex flex-col flex-auto gap-3 p-4">
             <h1 className="whitespace-nowrap truncate grid grid-cols-[auto_1fr_auto] items-center gap-1">
                 <span className="font-bold text-xl truncate">{user?.username}</span>
                 <span className="text-muted-foreground font-light text-sm pt-1.5 truncate">({user?.alias})</span>
                 <span className="text-muted-foreground font-light text-sm pt-1.5 truncate">Total: {totalScore}</span>
             </h1>
             {list.length === 0 ? (
-                <p className="text-center text-muted-foreground">
+                <p className="text-center text-muted-foreground flex-1 flex auto items-center justify-center">
                     No hay partidos finalizados para mostrar
                 </p>
             ) : (

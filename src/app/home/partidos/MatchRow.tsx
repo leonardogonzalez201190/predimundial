@@ -7,6 +7,7 @@ import React from "react";
 import { MatchRowProps } from "@/lib/types";
 import MatchPredictions from "./MatchPredictions";
 import VoteStatusBadge from "@/components/VoteStatusBadge";
+import { formatDateWithAmPm } from "@/lib/utils";
 
 export default function MatchRow({
   match,
@@ -14,7 +15,7 @@ export default function MatchRow({
   existingPrediction,
   onVote,
 }: MatchRowProps) {
-  const isLocked = match.status === "finished" || match.result !== null;
+  const isLocked = match.datetime < new Date() || match.result !== null;
 
   const handleVote = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,18 +44,16 @@ export default function MatchRow({
     "-";
 
   return (
-    <div className="rounded-lg p-3 space-y-3 bg-secondary">
+    <div className="rounded-lg p-3 space-y-2 bg-secondary">
 
       {/* Header */}
-      <div className="flex items-center justify-between text-xs">
-        <span>{match.venue}</span>
-
+      <div className="flex items-center justify-center text-xs">
         {isLocked ? (
           <span className="font-bold ">
             Final {match.result?.home} - {match.result?.away}
           </span>
         ) : (
-          <strong>{match.date} : {match.time}</strong>
+          <strong>{formatDateWithAmPm(match.datetime)}</strong>
         )}
       </div>
 

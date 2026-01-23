@@ -17,9 +17,8 @@ export interface MatchScore {
 
 export interface Match {
   id: string;
-  date: string;
-  time: string;
-  venue: string;
+  datetime: Date;
+  sede: string;
   status: string;
   result: MatchScore | null;
   home: Team;

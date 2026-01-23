@@ -16,9 +16,9 @@ export default async function AdminPage() {
     const matches = await Match.find({ event: session?.user?.event }).lean();
 
     return (
-        <div className="p-3 space-y-3">
+        <div className="p-3 sm:px-0 space-y-3">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">
+                <h1 className="text-sm font-bold">
                     Admin
                 </h1>
                 <span className="text-muted-foreground text-sm">

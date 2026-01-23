@@ -89,13 +89,13 @@ export default async function RankingPage() {
         podrás ver las puntuaciones actualizadas y compararlas con otros participantes.
       </div>
 
-      <h1 className="font-bold text-xl truncate">Ranking General</h1>
+      <h2 className="text-sm font-bold truncate">Ranking General</h2>
 
-      <table className="w-full text-left border-collapse text-[12px] bg-card">
-        <thead>
-          <tr className="border-b text-card-foreground bg-muted">
+      <table className="w-full bg-card">
+        <thead className="border-b text-card-foreground bg-muted">
+          <tr>
             <th className="p-1 text-center">#</th>
-            <th className="p-1 px-2">Alias</th>
+            <th className="p-1 px-2 text-left">Alias</th>
             <th className="p-1 text-center">Puntos</th>
             <th className="p-1 text-center">Predicciones</th>
             <th className="text-end p-1">Detalles</th>
