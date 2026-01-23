@@ -105,7 +105,7 @@ export default async function RankingPage() {
         <tbody>
           {ranking.map((userRanking, index) => (
             <tr key={userRanking.userId} className="border-b">
-              <td className="p-1 px-2 font-bold">{index + 1}</td>
+              <td className="p-1 text-center px-2 font-bold">{index + 1}</td>
               <td className="p-1 px-2">{userRanking.alias}</td>
               <td className="p-1 px-2 text-center font-bold">{userRanking.score}</td>
               <td className="p-1 px-2 text-center">{userRanking.predictions}</td>

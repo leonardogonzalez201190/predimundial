@@ -18,7 +18,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
       <header
         className="
           sticky top-0 z-50
-          flex items-center justify-between border-b h-12 px-4
+          flex items-center justify-between border-b h-12 px-4 sm:px-0
           bg-white/60 backdrop-blur-md
           dark:bg-black/40
         "

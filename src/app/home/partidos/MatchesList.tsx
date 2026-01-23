@@ -5,8 +5,8 @@ import { Group, Match, Prediction } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function MatchesList({ data, session, predictions }: any) {
-  
+export default function MatchesList({ data, session, predictions, groups }: any) {
+
   const router = useRouter();
 
   async function handleVote(matchId: string, home: number, away: number) {
@@ -42,6 +42,18 @@ export default function MatchesList({ data, session, predictions }: any) {
         Asegúrate de revisar tus marcadores antes de que cierre el plazo después de ese momento, tu voto quedará bloqueado y no podrá cambiarse.
       </div>
 
+      <div className="flex justify-end gap-2">
+        <strong>Filtrar por grupo:</strong>
+        <select name="group" id="group" onChange={(e) => router.push(`/home/partidos?group=${e.target.value}`)}>
+          <option value="">Todos</option>
+          {groups.map((group: string) => (
+            <option key={group} value={group}>
+              {group}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {data.groups.map((group: Group) => (
         <div key={group.group}>
           <h2 className="font-bold mb-4 text-primary">
@@ -50,7 +62,7 @@ export default function MatchesList({ data, session, predictions }: any) {
 
           <div className="space-y-4">
             {group.matches.map((match: Match) => {
-              
+
               const existing = predictions.find(
                 (p: Prediction) => p.matchId === match.id
               );

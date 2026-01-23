@@ -54,7 +54,7 @@ export default function MatchRow({
             Final {match.result?.home} - {match.result?.away}
           </span>
         ) : (
-          <span>{match.date} : {match.time}</span>
+          <strong>{match.date} : {match.time}</strong>
         )}
       </div>
 
@@ -71,9 +71,9 @@ export default function MatchRow({
             width={52}
             height={36}
           />
-          <span className="text-xs font-semibold mt-1">
+          <strong className="text-xs font-semibold mt-1">
             {match.home.name}
-          </span>
+          </strong>
         </div>
 
 
@@ -88,7 +88,7 @@ export default function MatchRow({
               className="w-12 sm:w-20 text-center bg-card"
             />
           ) : (
-            <span className="font-bold text-lg">{displayHomeScore}</span>
+            <strong className="text-lg">{displayHomeScore}</strong>
           )}
         </div>
 
@@ -116,7 +116,7 @@ export default function MatchRow({
               className="w-12 sm:w-20 text-center bg-card"
             />
           ) : (
-            <span className="font-bold text-lg">{displayAwayScore}</span>
+            <strong className="text-lg">{displayAwayScore}</strong>
           )}
         </div>
 
@@ -128,9 +128,9 @@ export default function MatchRow({
             width={52}
             height={36}
           />
-          <span className="text-xs font-semibold mt-1">
+          <strong className="text-xs font-semibold mt-1">
             {match.away.name}
-          </span>
+          </strong>
         </div>
       </form>
       {!isLocked && <VoteStatusBadge existingPrediction={!!existingPrediction} />}

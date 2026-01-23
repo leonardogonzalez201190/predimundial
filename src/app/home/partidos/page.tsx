@@ -7,15 +7,27 @@ import { authConfig } from "@/lib/auth";
 import MatchesList from "./MatchesList";
 import { serialize } from "@/lib/utils";
 
-export default async function MatchesPage() {
+export default async function MatchesPage({ searchParams }: { searchParams: { group?: string } }) {
+  const _searchParams = await searchParams;
   const session = await getServerSession(authConfig);
 
   await connectToDB();
 
   let predictions: any[] = [];
+  const query: any = {
+    event: session?.user?.event,
+  };
+
+  if (_searchParams.group) {
+    query.group = _searchParams.group;
+  }
+
   // Traer todos los partidos desde MongoDB
-  const matches = await Match.find({ event: session?.user?.event }).lean();
+  const matches = await Match.find(query).lean();
+
   if (session) predictions = await Prediction.find({ userId: session.user.id }).lean();
+
+  const groups: string[] = [];
 
   // Agrupar por grupo y dar el formato que quieres
   const grouped = matches.reduce((acc: any, match: any, index: number) => {
@@ -23,6 +35,7 @@ export default async function MatchesPage() {
     const groupKey = match.group?.replace("Grupo ", "").trim(); // "Grupo A" -> "A"
 
     if (!acc[groupKey]) {
+      groups.push(match.group);
       acc[groupKey] = { group: groupKey, matches: [] };
     }
 
@@ -46,11 +59,12 @@ export default async function MatchesPage() {
   };
 
   return (
-    <div className="px-4 space-y-4">
+    <div className="px-4 sm:px-0 space-y-4">
       <MatchesList
         predictions={serialize(predictions)}
         data={serialize(matchesData)}
         session={session}
+        groups={groups}
       />
     </div>
   );
