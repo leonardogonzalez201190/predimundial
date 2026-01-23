@@ -1,13 +1,14 @@
 "use client"
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchGroups } from "@/actions";
 
 export default function MatchesByGroup() {
 
     const [options, setOptions] = useState<string[]>([]);
-    const router = useRouter();
+    const patchName = usePathname();
+    const route = useRouter();
 
     useEffect(() => {
         const fetchOptions = async () => {
@@ -23,12 +24,19 @@ export default function MatchesByGroup() {
 
     const handleGroupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const group = e.target.value;
-        router.push(`/home/partidos?group=${group}`);
+        const searchParams = new URLSearchParams(window.location.search);
+        if (group) {
+            searchParams.set("group", group);
+        } else {
+            searchParams.delete("group");
+        }
+        const newUrl = `${patchName}?${searchParams.toString()}`;
+        route.push(newUrl);
     };
 
     return (
         <section className="flex items-center justify-end gap-2">
-            <h2>Filtrar por grupo</h2>
+            <h2>Filtrar por grupo:</h2>
             <select name="" id="" onChange={handleGroupChange}>
                 <option value="">Todos</option>
                 {options.map((option: string) => (
